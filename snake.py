@@ -8,9 +8,7 @@ import random
 from pygame.locals import *
 
 FPS = 5
-
 pygame.init()
-
 fpsClock=pygame.time.Clock()
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
@@ -29,8 +27,7 @@ UP    = (0, -1)
 DOWN  = (0, 1)
 LEFT  = (-1, 0)
 RIGHT = (1, 0)
-
-
+    
 screen.blit(surface, (0,0))
 
 def draw_box(surf, color, pos):
@@ -87,48 +84,39 @@ def check_eat(snake, apple):
     if snake.get_head_position() == apple.position:
         snake.length += 1
         apple.randomize()
-        
-snake = Snake()
-apple = Apple()
-while True:
 
-    for event in pygame.event.get():
+if __name__ == '__main__':
+    snake = Snake()
+    apple = Apple()
+    while True:
 
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-
-        elif event.type == KEYDOWN:
-            if event.key == K_UP:
-                snake.point(UP)
-            elif event.key == K_DOWN:
-                snake.point(DOWN)
-            elif event.key == K_LEFT:
-                snake.point(LEFT)
-            elif event.key == K_RIGHT:
-                snake.point(RIGHT)
-
-
-    surface.fill((255,255,255))
-    snake.move()
-    check_eat(snake, apple)
-    snake.draw(surface)
-    apple.draw(surface)
-    font = pygame.font.Font(None, 36)
-    text = font.render(str(snake.length), 1, (10, 10, 10))
-    textpos = text.get_rect()
-    textpos.centerx = 20
-    surface.blit(text, textpos)
-    screen.blit(surface, (0,0))
-
-    pygame.display.flip()
-    pygame.display.update()
-    fpsClock.tick(FPS + snake.length/3)
-    # x = random.randint(0, SCREEN_WIDTH)
-    # y = random.randint(0, SCREEN_HEIGHT)
-    # color = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
-    
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN:
+                if event.key == K_UP:
+                    snake.point(UP)
+                elif event.key == K_DOWN:
+                    snake.point(DOWN)
+                elif event.key == K_LEFT:
+                    snake.point(LEFT)
+                elif event.key == K_RIGHT:
+                    snake.point(RIGHT)
 
 
+        surface.fill((255,255,255))
+        snake.move()
+        check_eat(snake, apple)
+        snake.draw(surface)
+        apple.draw(surface)
+        font = pygame.font.Font(None, 36)
+        text = font.render(str(snake.length), 1, (10, 10, 10))
+        textpos = text.get_rect()
+        textpos.centerx = 20
+        surface.blit(text, textpos)
+        screen.blit(surface, (0,0))
 
-
+        pygame.display.flip()
+        pygame.display.update()
+        fpsClock.tick(FPS + snake.length/3)
