@@ -27,9 +27,6 @@ clock = pygame.time.Clock()
 
 pygame.key.set_repeat(1, 1)
 
-
-GRAY = (0x80, 0x80, 0x80)
-
 def load_image(name, colorkey=None):
     fullname = os.path.join('lunarlander', name)
     try:
@@ -44,14 +41,10 @@ def load_image(name, colorkey=None):
         image.set_colorkey(colorkey, RLEACCEL)
     return image, image.get_rect()
 
-def draw_terrain(surf):
-    r = pygame.Rect(-10, SCREEN_HEIGHT - 20, SCREEN_WIDTH + 20, 20)
-    pygame.draw.rect(surf, GRAY, r)
-
 class V(object):
-    """A simple class to keep track of vectors, including initializing
+    """
+    A simple class to keep track of vectors, including initializing
     from Cartesian and polar forms.
-
     """
     def __init__(self, x=0, y=0, angle=None, magnitude=None):
         self.x = x
@@ -88,7 +81,6 @@ class V(object):
 
     def __str__(self):
         return "X: %.3d Y: %.3d Angle: %.3d degrees Magnitude: %.3d" % (self.x, self.y, self.angle, self.magnitude)
-
 
 class Lander(pygame.sprite.DirtySprite):
     """
@@ -143,7 +135,6 @@ class Lander(pygame.sprite.DirtySprite):
         if not self.landed:
             self.velocity += V(magnitude=.5, angle=180)
 
-
     def ok_to_land(self):
         return (self.orientation < 10 or self.orientation > 350) and self.velocity.magnitude < 5
 
@@ -173,28 +164,28 @@ class Lander(pygame.sprite.DirtySprite):
             
     def explode(self, screen):
         for i in range(random.randint(20,40)):
-            pygame.draw.line(screen, (random.randint(190, 255), random.randint(0,100), random.randint(0,100)), self.rect.center, (random.randint(0, SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT)), random.randint(1,3))
+            pygame.draw.line(screen, 
+                             (random.randint(190, 255), 
+                              random.randint(0,100), 
+                              random.randint(0,100)), 
+                             self.rect.center, 
+                             (random.randint(0, SCREEN_WIDTH), 
+                              random.randint(0, SCREEN_HEIGHT)), 
+                             random.randint(1,3))
 
     def stats(self):
         return "Position: [%.2d,%.2d] Velocity: %.2f m/s at %.3d degrees Orientation: %.3d degrees  Fuel: %d Status: [%s]" % (self.rect.top, self.rect.left, self.velocity.magnitude, self.velocity.angle, self.orientation, self.fuel, ("Crashed" if not self.intact else ("Landed" if self.landed else ("OK to Land" if self.ok_to_land() else "Not OK"))))
+
 
 class Moon(pygame.sprite.DirtySprite):
     def __init__(self):
         self.width = SCREEN_WIDTH+20
         self.height = 20
-        
         self.image = pygame.Surface((self.width, self.height))
         self.rect = pygame.Rect(-10, SCREEN_HEIGHT - 20, SCREEN_WIDTH + 20, 20)
+        self.landing_ok = True
         return super(pygame.sprite.DirtySprite, self).__init__()
 
-        self.landing_ok = True
-
-    @property
-    def landing_ok(self):
-        return True
-
-    def update(self):
-        pass
 
 class Boulder(pygame.sprite.DirtySprite):
     def __init__(self):
@@ -204,11 +195,13 @@ class Boulder(pygame.sprite.DirtySprite):
         self.image = pygame.Surface((self.diameter, self.diameter))
         #self.image.fill((255,255,255,128))
         pygame.draw.circle(self.image, (128,128,128), (self.radius, self.radius), self.radius)
-        self.rect = pygame.Rect(self.x_pos, SCREEN_HEIGHT - (20 + self.radius), self.diameter, self.diameter)
+        self.rect = pygame.Rect(self.x_pos, SCREEN_HEIGHT - (20 + self.radius), 
+                                self.diameter, self.diameter)
         self.image = self.image.convert()
         self.landing_ok = False
         self.dirty = False
         return super(pygame.sprite.DirtySprite, self).__init__()
+
         
 def initialize():        
     lander = Lander()
@@ -218,6 +211,7 @@ def initialize():
     sprites.extend(boulders)
     sprites.append(moon)
     return lander, moon, boulders, pygame.sprite.RenderPlain(sprites)
+
 
 if __name__ == '__main__':
 
@@ -236,10 +230,9 @@ if __name__ == '__main__':
         
         if keys[K_r]:
             lander, moon, boulders, allsprites = initialize()
-
-        if keys[K_SPACE] or keys[K_UP]:
+        elif keys[K_SPACE] or keys[K_UP]:
             lander.boost()
-        if keys[K_LEFT]:
+        elif keys[K_LEFT]:
             lander.rotate(-5)
         elif keys[K_RIGHT]:
             lander.rotate(5)
@@ -247,8 +240,6 @@ if __name__ == '__main__':
         lander.check_landed(moon)
         for boulder in boulders:
             lander.check_landed(boulder)
-
-            
 
         surface.fill((255,255,255))
 
@@ -260,9 +251,6 @@ if __name__ == '__main__':
         surface.blit(text, textpos)
         screen.blit(surface, (0,0))
         allsprites.update()
-
-
-
         allsprites.draw(screen)
 
         def render_center_text(surface, screen, txt, color):
@@ -285,10 +273,8 @@ if __name__ == '__main__':
             pygame.display.update()
             time.sleep(1)
             lander, moon, boulders, allsprites = initialize()
-
         else:
             pygame.display.flip()
             pygame.display.update()
-            
 
-        fpsClock.tick(FPS)
+        fpsClock.tick(FPS) # and tick the clock.
