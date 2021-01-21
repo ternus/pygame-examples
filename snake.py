@@ -7,7 +7,7 @@ import random
 
 from pygame.locals import *
 
-FPS = 5
+FPS = 15
 pygame.init()
 fpsClock=pygame.time.Clock()
 
@@ -85,9 +85,29 @@ def check_eat(snake, apple):
         snake.length += 1
         apple.randomize()
 
+
+class Rock (object):
+    def __init__(self):
+        self.position = (0,0)
+        self.color = (160,80,30)
+        self.randomize()
+
+    def randomize(self):
+        self.position = (random.randint(0, GRID_WIDTH-1) * GRIDSIZE, random.randint(0, GRID_HEIGHT-1) * GRIDSIZE)    
+
+    def draw(self, surf):
+        draw_box(surf, self.color, self.position)
+
+def check_smash(snake, rock):
+    if snake.get_head_position() == rock.position:
+        snake.lose()
+        
+
+
 if __name__ == '__main__':
     snake = Snake()
     apple = Apple()
+    rock = Rock()
     while True:
 
         for event in pygame.event.get():
@@ -108,8 +128,10 @@ if __name__ == '__main__':
         surface.fill((255,255,255))
         snake.move()
         check_eat(snake, apple)
+        check_smash(snake, rock)
         snake.draw(surface)
         apple.draw(surface)
+        rock.draw(surface)
         font = pygame.font.Font(None, 36)
         text = font.render(str(snake.length), 1, (10, 10, 10))
         textpos = text.get_rect()
